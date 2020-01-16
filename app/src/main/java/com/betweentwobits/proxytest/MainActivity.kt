@@ -2,6 +2,7 @@ package com.betweentwobits.proxytest
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.Call
@@ -13,15 +14,18 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     private val client = OkHttpClient()
-    private lateinit var headerText: TextView
-    private lateinit var bodyText: TextView
+    private lateinit var responseText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        headerText = findViewById(R.id.header_text)
-        bodyText = findViewById(R.id.body_text)
+        responseText = findViewById(R.id.response_text)
+
+        val refreshButton = findViewById<Button>(R.id.refresh_button)
+        refreshButton.setOnClickListener {
+            requestFile()
+        }
 
         requestFile()
     }
@@ -41,22 +45,23 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) {
-                        throw IOException("Unexpected response code: $response")
+                        val error = "Unexpected response: \nCode: ${response.code}\nMessage: ${response.message}"
+                        responseText.text = error
+                        throw IOException(error)
                     }
 
-                    val headersBuilder = StringBuilder()
+                    val responseBuilder = StringBuilder()
                     for ((name, value) in response.headers) {
-                        headersBuilder.append("$name: $value")
-                        headersBuilder.append("\n")
+                        responseBuilder.append("$name: $value")
+                        responseBuilder.append("\n")
                     }
-
-                    val headers = headersBuilder.toString()
-                    Log.d("Response Headers", headers)
-                    headerText.text = headers
 
                     val body = response.body?.string().orEmpty()
-                    Log.d("Response Body", body)
-                    bodyText.text = body
+                    responseBuilder.append(body)
+
+                    val responseString = responseBuilder.toString()
+                    Log.d("MainActivity", "Response: $responseString")
+                    responseText.text = responseString
                 }
             }
         })
