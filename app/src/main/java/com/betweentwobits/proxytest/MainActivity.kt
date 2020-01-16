@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestFile() {
+        responseText.text = getString(R.string.loading)
+
         val request = Request.Builder()
             .url("http://date.jsontest.com/")
             .build()
