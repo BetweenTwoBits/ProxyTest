@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
             .url("http://date.jsontest.com/")
             .build()
 
+        // http://headers.jsontest.com/
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
