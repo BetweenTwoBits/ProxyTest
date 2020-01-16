@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestFile() {
         val request = Request.Builder()
-            .url("https://www.test.com/list.json")
+            .url("http://date.jsontest.com/")
             .build()
 
         client.newCall(request).enqueue(object : Callback {
