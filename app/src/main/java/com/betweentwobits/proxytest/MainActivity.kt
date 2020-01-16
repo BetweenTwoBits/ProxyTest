@@ -2,6 +2,7 @@ package com.betweentwobits.proxytest
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.Call
 import okhttp3.Callback
@@ -12,10 +13,15 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     private val client = OkHttpClient()
+    private lateinit var headerText: TextView
+    private lateinit var bodyText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
+        headerText = findViewById(R.id.header_text)
+        bodyText = findViewById(R.id.body_text)
 
         requestFile()
     }
@@ -36,13 +42,20 @@ class MainActivity : AppCompatActivity() {
                         throw IOException("Unexpected response code: $response")
                     }
 
+                    val headersBuilder = StringBuilder()
                     for ((name, value) in response.headers) {
-                        Log.d("Response Headers", "$name: $value")
+                        headersBuilder.append("$name: $value")
+                        headersBuilder.append("\n")
                     }
 
-                    Log.d("Response Body", response.body?.string().orEmpty())
-                }
+                    val headers = headersBuilder.toString()
+                    Log.d("Response Headers", headers)
+                    headerText.text = headers
 
+                    val body = response.body?.string().orEmpty()
+                    Log.d("Response Body", body)
+                    bodyText.text = body
+                }
             }
         })
     }
