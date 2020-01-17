@@ -53,12 +53,14 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     val responseBuilder = StringBuilder()
+                    responseBuilder.append("HEADERS:\n")
                     for ((name, value) in response.headers) {
                         responseBuilder.append("$name: $value")
                         responseBuilder.append("\n")
                     }
 
                     val body = response.body?.string().orEmpty()
+                    responseBuilder.append("\nBODY:\n")
                     responseBuilder.append(body)
 
                     val responseString = responseBuilder.toString()
